@@ -1,16 +1,4 @@
 import { GoogleGenAI } from "@google/genai";
-import { writeFile } from "fs";
-import mime from "mime";
-
-function saveBinaryFile(fileName: string, content: Buffer) {
-  writeFile(fileName, content, "utf8", (err) => {
-    if (err) {
-      console.error(`Error writing file ${fileName}:`, err);
-      return;
-    }
-    console.log(`File ${fileName} saved to file system.`);
-  });
-}
 
 export async function generateHairstyle(base64Image: string) {
   const ai = new GoogleGenAI({
@@ -49,15 +37,7 @@ export async function generateHairstyle(base64Image: string) {
       },
     ],
   });
-  for (const part of response.candidates?.[0]?.content?.parts || []) {
-    if (part.text) {
-      console.log(part.text);
-    } else if (part.inlineData) {
-      const imageData = part.inlineData.data || "";
-      const buffer = Buffer.from(imageData, "base64");
-      const fileName = `hairstyle_${Math.round(Math.random() * 10000)}_${randomHairstyle}`;
-      const fileExtension = mime.getExtension(part.inlineData.mimeType || "");
-      saveBinaryFile(`${fileName}.${fileExtension}`, buffer);
-    }
-  }
+
+  return response.candidates?.[0]?.content?.parts || [];
+
 }

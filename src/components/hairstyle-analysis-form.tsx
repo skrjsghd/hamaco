@@ -1,6 +1,7 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
+import { Loader2 } from "lucide-react";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
 import { ImageUploader } from "@/components/image-uploader";
@@ -28,11 +29,12 @@ const formSchema = z.object({
     )
     .refine(
       (file) =>
-        !file || ["image/jpeg", "image/jpg", "image/png", "image/webp"].includes(
+        !file ||
+        ["image/jpeg", "image/jpg", "image/png", "image/webp"].includes(
           file.type,
         ),
       "JPEG, PNG, WebP 형식만 지원됩니다",
-    )
+    ),
 });
 
 type FormData = z.infer<typeof formSchema>;
@@ -54,7 +56,6 @@ export function HairstyleAnalysisForm() {
     }
   };
 
-
   const handleSubmit = async (data: FormData) => {
     try {
       if (!data.image) {
@@ -63,8 +64,8 @@ export function HairstyleAnalysisForm() {
       }
 
       const base64Image = await convertToBase64(data.image);
-      await fetch('/api/generate', {
-        method: 'POST',
+      await fetch("/api/generate", {
+        method: "POST",
         body: JSON.stringify({
           image: base64Image,
           email: data.email,
@@ -73,12 +74,14 @@ export function HairstyleAnalysisForm() {
     } catch (error) {
       console.error(error);
     }
-  }
-
+  };
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-6 w-full">
+      <form
+        onSubmit={form.handleSubmit(handleSubmit)}
+        className="space-y-6 w-full"
+      >
         {/* 이미지 업로드 필드 */}
         <FormField
           control={form.control}
@@ -103,8 +106,7 @@ export function HairstyleAnalysisForm() {
         />
 
         {/* 이메일 필드 */}
-        {form.watch('image') && (
-
+        {form.watch("image") && (
           <FormField
             control={form.control}
             name="email"
@@ -115,11 +117,7 @@ export function HairstyleAnalysisForm() {
                   분석 결과를 받을 이메일 주소를 입력해주세요.
                 </FormDescription>
                 <FormControl>
-                  <Input
-                    type="email"
-                    placeholder="your@email.com"
-                    {...field}
-                  />
+                  <Input type="email" placeholder="your@email.com" {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -133,7 +131,11 @@ export function HairstyleAnalysisForm() {
           className="w-full"
           disabled={isLoading}
         >
-          {isLoading ? "분석 중..." : "헤어스타일 분석 시작"}
+          {isLoading ? (
+            <Loader2 className="animate-spin" />
+          ) : (
+            "헤어스타일 분석 시작"
+          )}
         </Button>
       </form>
     </Form>
