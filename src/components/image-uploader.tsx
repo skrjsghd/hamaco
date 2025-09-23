@@ -1,8 +1,9 @@
 "use client";
 
-import { ImageUp } from "lucide-react";
+import { UploadIcon } from "lucide-react";
 import { useState } from "react";
 import { formatFileSize } from "@/lib/imageUtils";
+import { cn } from "@/lib/utils";
 
 interface ImageUploaderProps {
   onImageSelect: (file: File | null) => void;
@@ -72,12 +73,13 @@ export function ImageUploader({
   return (
     <div className="space-y-4">
       <label
-        className={`border-2 border-dashed rounded-lg p-6 text-center transition-colors cursor-pointer block ${disabled || isLoading
-          ? "opacity-50 cursor-not-allowed"
-          : dragActive
-            ? "border-primary bg-primary/5"
-            : "border-muted-foreground/25 hover:border-muted-foreground/50"
-          }`}
+        className={cn(
+          "border-2 border-dashed rounded-lg p-6 text-center transition-colors cursor-pointer block",
+          disabled || isLoading ? "opacity-50 cursor-not-allowed" :
+            dragActive
+              ? "border-primary bg-primary/5"
+              : "border-muted-foreground/25 hover:border-muted-foreground/50",
+        )}
         onDragEnter={handleDrag}
         onDragLeave={handleDrag}
         onDragOver={handleDrag}
@@ -86,14 +88,8 @@ export function ImageUploader({
         {imagePreview && value && value instanceof File ? (
           <div className="space-y-4">
             <div
-              className="mx-auto max-h-48 rounded-lg overflow-hidden"
-              style={{
-                backgroundImage: `url(${imagePreview})`,
-                backgroundSize: "cover",
-                backgroundPosition: "center",
-                aspectRatio: "1",
-                maxWidth: "192px",
-              }}
+              className="mx-auto max-h-48 rounded-lg overflow-hidden aspect-square bg-center bg-cover"
+              style={{ backgroundImage: `url(${imagePreview})` }}
               role="img"
               aria-label="업로드된 이미지 미리보기"
             />
@@ -110,8 +106,10 @@ export function ImageUploader({
             </div>
           </div>
         ) : (
-          <div className="space-y-4">
-            <ImageUp className="mx-auto size-10 text-muted-foreground" />
+          <div className="gap-y-2 flex flex-col items-center justify-center">
+            <div className="flex size-8 items-center justify-center rounded-md bg-muted text-muted-foreground">
+              <UploadIcon size={16} />
+            </div>
             <div>
               <p className="text-sm font-medium">
                 {isLoading
