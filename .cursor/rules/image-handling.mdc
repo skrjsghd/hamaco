@@ -1,0 +1,102 @@
+---
+description: Image upload, processing, and validation guidelines
+globs: *.ts,*.tsx
+---
+
+# Image Handling Guidelines
+
+## Image Upload Requirements
+
+### Supported Formats
+- JPEG/JPG
+- PNG
+- WebP
+- Maximum file size: 10MB
+- Recommended dimensions: 512x512 to 2048x2048 pixels
+
+### Upload Component Structure
+
+```typescript
+// src/components/ImageUploader.tsx
+interface ImageUploaderProps {
+  onImageSelect: (file: File) => void;
+  onError: (error: string) => void;
+  isLoading?: boolean;
+}
+
+export function ImageUploader({ onImageSelect, onError, isLoading }: ImageUploaderProps) {
+  // Implementation with drag-and-drop support
+}
+```
+
+### Image Validation
+
+```typescript
+// src/lib/imageValidation.ts
+export function validateImage(file: File): { isValid: boolean; error?: string } {
+  const maxSize = 10 * 1024 * 1024; // 10MB
+  const allowedTypes = ['image/jpeg', 'image/png', 'image/webp'];
+  
+  if (file.size > maxSize) {
+    return { isValid: false, error: 'File size must be less than 10MB' };
+  }
+  
+  if (!allowedTypes.includes(file.type)) {
+    return { isValid: false, error: 'Only JPEG, PNG, and WebP formats are supported' };
+  }
+  
+  return { isValid: true };
+}
+```
+
+### Image Processing
+
+```typescript
+// src/lib/imageProcessor.ts
+export async function processImageForAI(file: File): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => {
+      const result = reader.result as string;
+      // Remove data:image/...;base64, prefix
+      const base64 = result.split(',')[1];
+      resolve(base64);
+    };
+    reader.onerror = reject;
+    reader.readAsDataURL(file);
+  });
+}
+```
+
+## Image Optimization
+
+### Client-Side Optimization
+- Resize images to optimal dimensions before upload
+- Compress images to reduce file size
+- Convert to WebP format when possible
+
+### Server-Side Processing
+- Validate image integrity
+- Check for face detection feasibility
+- Generate thumbnails for preview
+
+## Security Considerations
+
+1. **File Type Validation**: Always validate file types server-side
+2. **Size Limits**: Enforce strict file size limits
+3. **Malware Scanning**: Consider implementing virus scanning for uploaded files
+4. **Temporary Storage**: Store uploaded images temporarily and delete after processing
+
+## Error Handling
+
+- Provide clear error messages for invalid files
+- Handle network errors gracefully
+- Implement retry mechanisms for failed uploads
+- Show progress indicators for large file uploads
+
+## Accessibility
+
+- Include proper alt text for uploaded images
+- Support keyboard navigation for upload interface
+- Provide screen reader friendly feedback
+- Ensure sufficient color contrast for UI elements

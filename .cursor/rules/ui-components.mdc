@@ -1,0 +1,158 @@
+---
+description: UI/UX components and styling guidelines using Tailwind CSS and shadcn/ui
+globs: *.tsx,*.css
+---
+
+# UI/UX Components Guidelines
+
+## Design System
+USE Shadcn/ui!
+
+### Color Palette
+- Primary: Modern, professional colors suitable for beauty/fashion industry
+- Secondary: Complementary colors for accents
+- Neutral: Grays for text and backgrounds
+- Success/Error: Clear feedback colors
+
+### Typography
+- Use Geist font family (already configured)
+- Maintain consistent font weights and sizes
+- Ensure good readability across devices
+
+## Component Architecture
+
+### Core Components
+
+```typescript
+// src/components/ui/Button.tsx
+interface ButtonProps {
+  variant: 'primary' | 'secondary' | 'outline' | 'ghost';
+  size: 'sm' | 'md' | 'lg';
+  isLoading?: boolean;
+  children: React.ReactNode;
+}
+
+// src/components/ui/Card.tsx
+interface CardProps {
+  title?: string;
+  description?: string;
+  children: React.ReactNode;
+}
+
+// src/components/ui/LoadingSpinner.tsx
+interface LoadingSpinnerProps {
+  size?: 'sm' | 'md' | 'lg';
+  text?: string;
+}
+```
+
+### Feature-Specific Components
+
+```typescript
+// src/components/ImageUploader.tsx
+interface ImageUploaderProps {
+  onImageSelect: (file: File) => void;
+  onError: (error: string) => void;
+  isLoading?: boolean;
+  maxSize?: number;
+  acceptedTypes?: string[];
+}
+
+// src/components/HairstyleCard.tsx
+interface HairstyleCardProps {
+  imageUrl: string;
+  title: string;
+  description: string;
+  difficulty: 'Easy' | 'Medium' | 'Hard';
+  maintenance: 'Low' | 'Medium' | 'High';
+}
+
+// src/components/FaceShapeIndicator.tsx
+interface FaceShapeIndicatorProps {
+  faceShape: string;
+  confidence: number;
+}
+```
+
+## Layout Guidelines
+
+### Page Structure
+- Header with app branding
+- Main content area with clear hierarchy
+- Footer with additional information
+- Responsive design for mobile and desktop
+
+### Grid System
+- Use CSS Grid for complex layouts
+- Flexbox for component alignment
+- Tailwind's responsive utilities for breakpoints
+
+## User Experience Patterns
+
+### Loading States
+- Skeleton loaders for content
+- Progress indicators for uploads
+- Spinner animations for AI processing
+
+### Error Handling
+- Toast notifications for errors
+- Inline error messages for forms
+- Fallback UI for failed states
+
+### Success States
+- Confirmation messages
+- Visual feedback for completed actions
+- Celebration animations for results
+
+## Accessibility Requirements
+
+### ARIA Labels
+- Proper labeling for screen readers
+- Descriptive alt text for images
+- Keyboard navigation support
+
+### Color Contrast
+- WCAG AA compliance
+- High contrast mode support
+- Color-blind friendly palette
+
+### Focus Management
+- Visible focus indicators
+- Logical tab order
+- Skip links for navigation
+
+## Responsive Design
+
+### Breakpoints
+- Mobile: 320px - 768px
+- Tablet: 768px - 1024px
+- Desktop: 1024px+
+
+### Mobile-First Approach
+- Design for mobile first
+- Progressive enhancement for larger screens
+- Touch-friendly interface elements
+
+## Animation Guidelines
+
+### Micro-interactions
+- Subtle hover effects
+- Smooth transitions between states
+- Loading animations that don't distract
+
+### Performance
+- Use CSS transforms for animations
+- Avoid animating layout properties
+- Implement reduced motion preferences
+
+## Component Library
+
+### shadcn/ui Integration
+- Use shadcn/ui components as base
+- Customize components to match brand
+- Extend components for specific needs
+
+### Custom Components
+- Create reusable components for app-specific features
+- Maintain consistent API patterns
+- Document component props and usage

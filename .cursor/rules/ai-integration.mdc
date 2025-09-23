@@ -1,0 +1,75 @@
+---
+description: AI model integration guidelines for Gemini 2.5 Flash and image generation
+globs: *.ts,*.tsx
+---
+
+# AI Integration Guidelines
+
+## Gemini 2.5 Flash Integration
+
+Use Google's Gemini 2.5 Flash model for face shape analysis and hairstyle generation.
+
+### Required Dependencies
+
+```bash
+npm install @google/generative-ai
+```
+
+### Environment Variables
+
+```env
+GEMINI_API_KEY=your_gemini_api_key_here
+```
+
+### API Integration Pattern
+
+```typescript
+// src/lib/gemini.ts
+import { GoogleGenerativeAI } from '@google/generative-ai';
+
+const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY!);
+
+export async function analyzeFaceShape(imageBase64: string) {
+  const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash-exp" });
+  
+  const prompt = `
+    Analyze this face image and determine the face shape.
+    Face shapes: oval, round, square, heart, diamond, oblong, triangle.
+    Return only the face shape classification.
+  `;
+  
+  const result = await model.generateContent([
+    prompt,
+    { inlineData: { data: imageBase64, mimeType: "image/jpeg" } }
+  ]);
+  
+  return result.response.text();
+}
+```
+
+### Image Generation Guidelines
+
+1. **Input Processing**: Convert uploaded images to base64 format
+2. **Prompt Engineering**: Use specific prompts for hairstyle generation
+3. **Error Handling**: Implement proper error handling for API failures
+4. **Rate Limiting**: Respect API rate limits and implement retry logic
+5. **Security**: Never expose API keys in client-side code
+
+### Face Shape Analysis
+
+- Analyze uploaded images to determine face shape
+- Support common face shapes: oval, round, square, heart, diamond, oblong, triangle
+- Provide confidence scores for classifications
+
+### Hairstyle Generation
+
+- Generate 3-5 different hairstyle options per face shape
+- Include styling tips and maintenance advice
+- Consider user preferences (length, style, maintenance level)
+
+### Best Practices
+
+- Always validate image formats and sizes before processing
+- Implement proper loading states during AI processing
+- Cache results to improve performance
+- Provide fallback options if AI analysis fails

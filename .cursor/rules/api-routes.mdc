@@ -1,0 +1,226 @@
+---
+description: API routes and backend logic guidelines for Next.js App Router
+globs: **/api/**/*.ts,**/route.ts
+---
+
+# API Routes Guidelines
+
+## Route Structure
+
+### API Endpoints
+
+```typescript
+// src/app/api/analyze-face/route.ts
+export async function POST(request: Request) {
+  try {
+    const formData = await request.formData();
+    const image = formData.get('image') as File;
+    
+    if (!image) {
+      return Response.json({ error: 'No image provided' }, { status: 400 });
+    }
+    
+    // Validate image
+    const validation = validateImage(image);
+    if (!validation.isValid) {
+      return Response.json({ error: validation.error }, { status: 400 });
+    }
+    
+    // Process image and analyze face shape
+    const faceShape = await analyzeFaceShape(image);
+    
+    return Response.json({ faceShape });
+  } catch (error) {
+    return Response.json({ error: 'Internal server error' }, { status: 500 });
+  }
+}
+```
+
+```typescript
+// src/app/api/generate-hairstyles/route.ts
+export async function POST(request: Request) {
+  try {
+    const { faceShape, preferences } = await request.json();
+    
+    if (!faceShape) {
+      return Response.json({ error: 'Face shape required' }, { status: 400 });
+    }
+    
+    // Generate hairstyle recommendations
+    const hairstyles = await generateHairstyles(faceShape, preferences);
+    
+    return Response.json({ hairstyles });
+  } catch (error) {
+    return Response.json({ error: 'Internal server error' }, { status: 500 });
+  }
+}
+```
+
+## Error Handling
+
+### Standard Error Responses
+
+```typescript
+// src/lib/api-errors.ts
+export class APIError extends Error {
+  constructor(
+    public message: string,
+    public statusCode: number = 500,
+    public code?: string
+  ) {
+    super(message);
+  }
+}
+
+export function handleAPIError(error: unknown): Response {
+  if (error instanceof APIError) {
+    return Response.json(
+      { error: error.message, code: error.code },
+      { status: error.statusCode }
+    );
+  }
+  
+  console.error('Unexpected error:', error);
+  return Response.json(
+    { error: 'Internal server error' },
+    { status: 500 }
+  );
+}
+```
+
+### Validation Patterns
+
+```typescript
+// src/lib/validation.ts
+import { z } from 'zod';
+
+export const imageUploadSchema = z.object({
+  image: z.instanceof(File),
+});
+
+export const hairstyleRequestSchema = z.object({
+  faceShape: z.enum(['oval', 'round', 'square', 'heart', 'diamond', 'oblong', 'triangle']),
+  preferences: z.object({
+    length: z.enum(['short', 'medium', 'long']).optional(),
+    style: z.enum(['casual', 'formal', 'trendy']).optional(),
+    maintenance: z.enum(['low', 'medium', 'high']).optional(),
+  }).optional(),
+});
+```
+
+## Security Considerations
+
+### Input Validation
+- Validate all incoming data
+- Sanitize file uploads
+- Check file types and sizes
+- Implement rate limiting
+
+### Authentication (if needed)
+```typescript
+// src/lib/auth.ts
+export async function verifyAPIKey(request: Request): Promise<boolean> {
+  const apiKey = request.headers.get('x-api-key');
+  return apiKey === process.env.API_KEY;
+}
+```
+
+## Performance Optimization
+
+### Caching Strategy
+```typescript
+// src/lib/cache.ts
+import { Redis } from 'ioredis';
+
+const redis = new Redis(process.env.REDIS_URL);
+
+export async function getCachedResult(key: string) {
+  return await redis.get(key);
+}
+
+export async function setCachedResult(key: string, value: any, ttl: number = 3600) {
+  await redis.setex(key, ttl, JSON.stringify(value));
+}
+```
+
+### Response Optimization
+- Compress responses with gzip
+- Set appropriate cache headers
+- Implement pagination for large datasets
+- Use streaming for large file uploads
+
+## API Documentation
+
+### OpenAPI Specification
+```typescript
+// src/lib/openapi.ts
+export const apiSpec = {
+  openapi: '3.0.0',
+  info: {
+    title: 'HairUlt API',
+    version: '1.0.0',
+    description: 'AI-powered hairstyle recommendation API',
+  },
+  paths: {
+    '/api/analyze-face': {
+      post: {
+        summary: 'Analyze face shape from uploaded image',
+        requestBody: {
+          content: {
+            'multipart/form-data': {
+              schema: {
+                type: 'object',
+                properties: {
+                  image: { type: 'string', format: 'binary' },
+                },
+              },
+            },
+          },
+        },
+        responses: {
+          '200': {
+            description: 'Face shape analysis result',
+            content: {
+              'application/json': {
+                schema: {
+                  type: 'object',
+                  properties: {
+                    faceShape: { type: 'string' },
+                    confidence: { type: 'number' },
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+  },
+};
+```
+
+## Testing
+
+### API Testing
+```typescript
+// src/__tests__/api/analyze-face.test.ts
+import { POST } from '@/app/api/analyze-face/route';
+
+describe('/api/analyze-face', () => {
+  it('should analyze face shape from valid image', async () => {
+    const formData = new FormData();
+    formData.append('image', mockImageFile);
+    
+    const request = new Request('http://localhost/api/analyze-face', {
+      method: 'POST',
+      body: formData,
+    });
+    
+    const response = await POST(request);
+    const data = await response.json();
+    
+    expect(response.status).toBe(200);
+    expect(data.faceShape).toBeDefined();
+  });
+});
+```

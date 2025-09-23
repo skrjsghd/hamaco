@@ -1,0 +1,42 @@
+---
+alwaysApply: true
+description: Project structure and architecture guidelines for HairUlt hairstyle recommendation app
+---
+
+# HairUlt Project Structure
+
+This is a Next.js 15 application for AI-powered hairstyle recommendations. The app analyzes face shapes from uploaded images and generates personalized hairstyle suggestions using AI models.
+
+## Core Architecture
+
+- **Framework**: Next.js 15 with App Router
+- **Styling**: Tailwind CSS v4 with PostCSS
+- **Language**: TypeScript
+- **Linting**: Biome for code quality and formatting
+- **UI Components**: shadcn/ui components
+
+## Key Directories
+
+- `src/app/` - Next.js App Router pages and layouts
+- `src/components/` - Reusable React components
+- `src/lib/` - Utility functions and configurations
+- `src/types/` - TypeScript type definitions
+- `public/` - Static assets
+
+## Main Features
+
+1. **Image Upload**: Users can upload face photos for analysis
+2. **Face Shape Detection**: AI analyzes uploaded images to determine face shape
+3. **Hairstyle Generation**: AI generates multiple hairstyle options based on face shape
+4. **Recommendation Display**: Shows generated hairstyles with styling tips
+
+## File Naming Conventions
+
+All of files should be lowercase with hyphens (e.g., `upload-page.tsx`)
+
+## Entry Points
+
+- Main page: [src/app/page.tsx](mdc:src/app/page.tsx)
+- Root layout: [src/app/layout.tsx](mdc:src/app/layout.tsx)
+- Global styles: [src/app/globals.css](mdc:src/app/globals.css)
+- Configuration: [next.config.ts](mdc:next.config.ts)
