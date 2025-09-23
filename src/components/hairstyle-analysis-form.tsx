@@ -78,29 +78,7 @@ export function HairstyleAnalysisForm() {
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-6">
-        {/* 이메일 필드 */}
-        <FormField
-          control={form.control}
-          name="email"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>이메일 주소</FormLabel>
-              <FormControl>
-                <Input
-                  type="email"
-                  placeholder="your@email.com"
-                  {...field}
-                />
-              </FormControl>
-              <FormDescription>
-                분석 결과를 받을 이메일 주소를 입력해주세요.
-              </FormDescription>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-
+      <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-6 w-full">
         {/* 이미지 업로드 필드 */}
         <FormField
           control={form.control}
@@ -108,6 +86,9 @@ export function HairstyleAnalysisForm() {
           render={({ field }) => (
             <FormItem>
               <FormLabel>얼굴 사진</FormLabel>
+              <FormDescription>
+                얼굴이 선명하게 보이는 정면 사진을 업로드해주세요.
+              </FormDescription>
               <FormControl>
                 <ImageUploader
                   onImageSelect={handleImageSelect}
@@ -116,13 +97,35 @@ export function HairstyleAnalysisForm() {
                   disabled={isLoading}
                 />
               </FormControl>
-              <FormDescription>
-                얼굴이 선명하게 보이는 정면 사진을 업로드해주세요.
-              </FormDescription>
               <FormMessage />
             </FormItem>
           )}
         />
+
+        {/* 이메일 필드 */}
+        {form.watch('image') && (
+
+          <FormField
+            control={form.control}
+            name="email"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>이메일 주소</FormLabel>
+                <FormDescription>
+                  분석 결과를 받을 이메일 주소를 입력해주세요.
+                </FormDescription>
+                <FormControl>
+                  <Input
+                    type="email"
+                    placeholder="your@email.com"
+                    {...field}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        )}
 
         <Button
           size={"lg"}

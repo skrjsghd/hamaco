@@ -1,6 +1,6 @@
 "use client";
 
-import { UploadIcon } from "lucide-react";
+import { RotateCcwIcon, UploadIcon } from "lucide-react";
 import { useState } from "react";
 import { formatFileSize } from "@/lib/imageUtils";
 import { cn } from "@/lib/utils";
@@ -74,7 +74,7 @@ export function ImageUploader({
     <div className="space-y-4">
       <label
         className={cn(
-          "border-2 border-dashed rounded-lg p-6 text-center transition-colors cursor-pointer block",
+          "border-2 border-dashed rounded-lg p-6 text-center transition-colors cursor-pointer block relative group overflow-hidden",
           disabled || isLoading ? "opacity-50 cursor-not-allowed" :
             dragActive
               ? "border-primary bg-primary/5"
@@ -86,25 +86,18 @@ export function ImageUploader({
         onDrop={handleDrop}
       >
         {imagePreview && value && value instanceof File ? (
-          <div className="space-y-4">
+          <>
             <div
-              className="mx-auto max-h-48 rounded-lg overflow-hidden aspect-square bg-center bg-cover"
+              className="w-full rounded-lg overflow-hidden aspect-square bg-center bg-cover"
               style={{ backgroundImage: `url(${imagePreview})` }}
               role="img"
               aria-label="업로드된 이미지 미리보기"
             />
-            <div className="text-sm text-muted-foreground space-y-1">
-              <p>
-                <strong>파일명:</strong> {value.name}
-              </p>
-              <p>
-                <strong>크기:</strong> {formatFileSize(value.size)}
-              </p>
-              <p className="text-xs">
-                다른 이미지를 업로드하려면 클릭하거나 드래그해주세요.
-              </p>
+            <div className="opacity-0 absolute inset-0 flex flex-col items-center justify-center bg-black/50 group-hover:opacity-100 transition-all backdrop-blur-xs text-white">
+              <RotateCcwIcon size={24} />
+              <div className="font-medium mt-2">다시 업로드</div>
             </div>
-          </div>
+          </>
         ) : (
           <div className="gap-y-2 flex flex-col items-center justify-center">
             <div className="flex size-8 items-center justify-center rounded-md bg-muted text-muted-foreground">
