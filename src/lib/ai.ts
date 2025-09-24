@@ -38,6 +38,15 @@ export async function generateHairstyle(base64Image: string) {
     ],
   });
 
-  return response.candidates?.[0]?.content?.parts || [];
+  const imageRawData = response.candidates?.[0]?.content?.parts?.[0]?.inlineData?.data;
+
+  if (!imageRawData) {
+    throw new Error("Failed to generate image");
+  }
+
+  return {
+    hairstyleName: randomHairstyle,
+    image: Buffer.from(imageRawData, "base64"),
+  }
 
 }
