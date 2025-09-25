@@ -20,7 +20,7 @@ export async function generateHairstyle(base64Image: string) {
           },
         },
         {
-          text: `Transform the hairstyle of the person in the image into a ${name} (${description}), keeping a natural and realistic look. Do not adjust the color of hair`,
+          text: `인물의 헤어스타일을 "${name}" (${description})로 변환하고, 얼굴형에 맞춰 자연스럽고 실제감 있는 느낌을 유지하세요. 머리색은 변경하지 마세요.`,
         },
       ],
     });

@@ -1,32 +1,32 @@
 export const womenHairstyles = [
   {
-    name: "Layered CS Curl Perm",
+    name: "레이어드 CS 컬 펌",
     description:
-      "Characterized by light, voluminous layers throughout the hair, with a mix of C-curls and S-curls for a naturally flowing wave pattern.",
+      "전체적으로 층을 내어 가볍고 볼륨 있게 연출하며, C컬과 S컬을 섞어 자연스럽게 흐르는 듯한 웨이브가 특징입니다.",
   },
   {
-    name: "Blunt Cut & Tassel Cut",
+    name: "칼단발 & 태슬컷",
     description:
-      "A chic and sophisticated look featuring a clean, straight cut ending sharply at the jawline, typically styled without waves (straight).",
+      "턱선에 맞춰 일자로 깔끔하게 자른 단발로, 시크하고 도회적인 분위기를 강조하며 스트레이트하게 연출합니다.",
   },
   {
-    name: "Hippie Perm & Vintage Perm",
+    name: "히피펌 & 빈티지 펌",
     description:
-      "A full-volume style with tight, all-over curls, creating a messy and hip texture that embraces a retro aesthetic.",
+      "컬이 모발 전체에 촘촘하게 들어가 부스스하고 힙한 느낌을 주며, 레트로(복고)적인 무드를 살립니다.",
   },
   {
-    name: "Hime Cut (Princess Cut)",
+    name: "히메컷",
     description:
-      "A bold style where the side sections of hair are cut straight to frame the face at the jawline or lip line, adding a unique personality and creating a face-slimming effect.",
+      "얼굴 옆 라인의 머리카락을 턱선이나 입술선에 맞춰 일자로 잘라 개성을 표현하고 얼굴을 작아 보이게 합니다.",
   },
   {
-    name: "Birkin Bang (Natural Full Bang)",
+    name: "버킨 뱅 (Birkin Bang)",
     description:
-      "A natural full fringe that is lightly layered and cut to the length between the eyebrows and eyelids, softening long face shapes.",
+      "눈을 가리지 않도록 자연스럽게 층을 내어 연출하는 내추럴 풀뱅(일자 앞머리)으로, 긴 얼굴형을 보완해 부드럽게 만들어 줍니다.",
   },
   {
-    name: "Medium-Length Wave Perm",
+    name: "중단발 단발 웨이브펌",
     description:
-      "Natural waves applied to the ambiguous medium length, creating a soft and feminine vibe, often used to complement or flatter a longer face shape.",
+      "애매한 중단발 길이에 자연스러운 웨이브를 넣어 부드럽고 여성스러운 분위기를 연출하며, 긴 얼굴형 보완에 좋습니다.",
   },
 ];
