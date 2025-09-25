@@ -12,32 +12,29 @@ export async function POST(request: Request) {
   const email = requestData.email as string;
 
   try {
-    const supabase = createClient(
-      supabaseUrl!,
-      supabaseKey!,
-    );
-    const { hairstyleName, image: hairstyleImage } = await generateHairstyle(image);
-
-    const { data, error } = await supabase.storage
-      .from("images").upload(`${email}_${Date.now()}.png`, hairstyleImage, {
-        contentType: "image/png",
-      })
-
-    if (!data || error) {
-      throw new Error("Failed to upload image to Supabase");
-    }
+    const supabase = createClient(supabaseUrl!, supabaseKey!);
+    const responses = await generateHairstyle(image);
 
     await db.transaction(async (tx) => {
       await tx.insert(profile).values({
         email,
-      })
-      await tx.insert(hairstyle).values({
-        imageUrl: data.fullPath,
-        name: hairstyleName,
-        profileEmail: email
-      })
-    })
+      });
+      for (const response of responses) {
+        const filename = `${crypto.randomUUID()}.png`;
+        const { data, error } = await supabase.storage
+          .from("images")
+          .upload(filename, response.image, { contentType: "image/png" });
+        if (!data || error) {
+          throw new Error("Failed to upload image to Supabase");
+        }
 
+        await tx.insert(hairstyle).values({
+          imageUrl: data.fullPath,
+          name: response.hairstyleName,
+          profileEmail: email,
+        });
+      }
+    });
 
     return Response.json({ message: "Image generated successfully" });
   } catch (error) {
