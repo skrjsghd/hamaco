@@ -82,6 +82,24 @@ export function HairstyleAnalysisForm() {
         onSubmit={form.handleSubmit(handleSubmit)}
         className="space-y-6 w-full"
       >
+        {/* 이메일 필드 */}
+        <FormField
+          control={form.control}
+          name="email"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>이메일 주소</FormLabel>
+              <FormDescription>
+                분석 결과를 받을 이메일 주소를 입력해주세요.
+              </FormDescription>
+              <FormControl>
+                <Input type="email" placeholder="your@email.com" {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
         {/* 이미지 업로드 필드 */}
         <FormField
           control={form.control}
@@ -104,26 +122,6 @@ export function HairstyleAnalysisForm() {
             </FormItem>
           )}
         />
-
-        {/* 이메일 필드 */}
-        {form.watch("image") && (
-          <FormField
-            control={form.control}
-            name="email"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>이메일 주소</FormLabel>
-                <FormDescription>
-                  분석 결과를 받을 이메일 주소를 입력해주세요.
-                </FormDescription>
-                <FormControl>
-                  <Input type="email" placeholder="your@email.com" {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-        )}
 
         <Button
           size={"lg"}
