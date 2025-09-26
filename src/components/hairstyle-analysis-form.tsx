@@ -3,6 +3,7 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Loader2 } from "lucide-react";
 import { useForm } from "react-hook-form";
+import { toast } from "sonner";
 import * as z from "zod";
 import { ImageUploader } from "@/components/image-uploader";
 import { Button } from "@/components/ui/button";
@@ -58,21 +59,27 @@ export function HairstyleAnalysisForm() {
 
   const handleSubmit = async (data: FormData) => {
     try {
-      if (!data.image) {
-        console.error("이미지가 선택되지 않았습니다.");
-        return;
-      }
+      if (!data.image) return;
 
       const base64Image = await convertToBase64(data.image);
-      await fetch("/api/generate", {
+      const response = await fetch("/api/generate", {
         method: "POST",
         body: JSON.stringify({
           image: base64Image,
           email: data.email,
         }),
       });
+
+      if (response.ok) {
+        toast.success("헤어스타일 분석이 완료되었습니다.", {
+          description: "이메일로 결과를 확인해주세요.",
+        });
+      } else {
+        toast.error("분석 중 오류가 발생했습니다. 다시 시도해주세요.");
+      }
     } catch (error) {
       console.error(error);
+      toast.error("분석 중 오류가 발생했습니다. 다시 시도해주세요.");
     }
   };
 
