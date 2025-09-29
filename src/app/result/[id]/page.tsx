@@ -22,17 +22,18 @@ export default async function ResultPage({
   }
 
   return (
-    <div className="max-w-lg mx-auto px-4 min-h-svh grid grid-cols-2 gap-4">
+    <div className="max-w-lg mx-auto px-4 py-6 min-h-svh space-y-10">
       {result.hairstyles.map((hairstyle) => (
-        <Image
-          key={hairstyle.imageUrl}
-          src={`${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/${hairstyle.imageUrl}`}
-          alt={hairstyle.name}
-          sizes="100vw"
-          width={500}
-          height={300}
-          className="w-full"
-        />
+        <div key={hairstyle.imageUrl}>
+          <h3 className="text-lg font-bold">{hairstyle.name}</h3>
+          <Image
+            src={`${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/${hairstyle.imageUrl}`}
+            alt={hairstyle.name}
+            width={500}
+            height={500}
+            className="aspect-square rounded-lg overflow-hidden object-cover object-top"
+          />
+        </div>
       ))}
     </div>
   );
