@@ -71,11 +71,16 @@ export function HairstyleAnalysisForm() {
       });
 
       if (response.ok) {
-        toast.success("헤어스타일 분석이 완료되었습니다.", {
-          description: "이메일로 결과를 확인해주세요.",
-        });
-      } else {
-        toast.error("분석 중 오류가 발생했습니다. 다시 시도해주세요.");
+        toast.success("헤어스타일 분석이 완료되었습니다.");
+        return;
+      }
+
+      switch (response.status) {
+        case 409:
+          toast.error("이미 사용된 이메일입니다.");
+          break;
+        default:
+          toast.error("분석 중 오류가 발생했습니다. 다시 시도해주세요.");
       }
     } catch (error) {
       console.error(error);
