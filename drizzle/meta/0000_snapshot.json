@@ -1,5 +1,5 @@
 {
-  "id": "bdf4bbf2-c2f9-4522-a7db-a634c55adbe6",
+  "id": "9e4bcf40-6f34-4716-aec8-8bb94c8f039a",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -8,15 +8,92 @@
       "name": "hairstyle",
       "schema": "",
       "columns": {
-        "image_url": {
-          "name": "image_url",
-          "type": "varchar(256)",
+        "id": {
+          "name": "id",
+          "type": "uuid",
           "primaryKey": true,
-          "notNull": true
+          "notNull": true,
+          "default": "gen_random_uuid()"
         },
         "name": {
           "name": "name",
           "type": "varchar(256)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "description": {
+          "name": "description",
+          "type": "varchar(512)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "hair_length": {
+          "name": "hair_length",
+          "type": "hair_length",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "cut_type": {
+          "name": "cut_type",
+          "type": "cut_type",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "perm_type": {
+          "name": "perm_type",
+          "type": "perm_type",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "straight_type": {
+          "name": "straight_type",
+          "type": "straight_type",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "updo_type": {
+          "name": "updo_type",
+          "type": "updo_type",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "curl_pattern": {
+          "name": "curl_pattern",
+          "type": "curl_pattern",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "bangs_type": {
+          "name": "bangs_type",
+          "type": "bangs_type",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "volume_type": {
+          "name": "volume_type",
+          "type": "volume_type",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "layering_type": {
+          "name": "layering_type",
+          "type": "layering_type",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "finish_texture": {
+          "name": "finish_texture",
+          "type": "finish_texture",
+          "typeSchema": "public",
           "primaryKey": false,
           "notNull": false
         },
@@ -24,21 +101,15 @@
           "name": "created_at",
           "type": "timestamp",
           "primaryKey": false,
-          "notNull": false,
+          "notNull": true,
           "default": "now()"
         },
         "updated_at": {
           "name": "updated_at",
           "type": "timestamp",
           "primaryKey": false,
-          "notNull": false,
+          "notNull": true,
           "default": "now()"
-        },
-        "profile_email": {
-          "name": "profile_email",
-          "type": "varchar(256)",
-          "primaryKey": false,
-          "notNull": false
         }
       },
       "indexes": {},
@@ -49,28 +120,47 @@
       "checkConstraints": {},
       "isRLSEnabled": false
     },
-    "public.profile": {
-      "name": "profile",
+    "public.hairstyle_suggestion": {
+      "name": "hairstyle_suggestion",
       "schema": "",
       "columns": {
-        "email": {
-          "name": "email",
-          "type": "varchar(256)",
+        "id": {
+          "name": "id",
+          "type": "uuid",
           "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "user_id": {
+          "name": "user_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "hairstyle_id": {
+          "name": "hairstyle_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "image_url": {
+          "name": "image_url",
+          "type": "varchar(256)",
+          "primaryKey": false,
           "notNull": true
         },
         "created_at": {
           "name": "created_at",
           "type": "timestamp",
           "primaryKey": false,
-          "notNull": false,
+          "notNull": true,
           "default": "now()"
         },
         "updated_at": {
           "name": "updated_at",
           "type": "timestamp",
           "primaryKey": false,
-          "notNull": false,
+          "notNull": true,
           "default": "now()"
         }
       },
@@ -81,9 +171,169 @@
       "policies": {},
       "checkConstraints": {},
       "isRLSEnabled": false
+    },
+    "public.user": {
+      "name": "user",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "email": {
+          "name": "email",
+          "type": "varchar(256)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "portrait_image_url": {
+          "name": "portrait_image_url",
+          "type": "varchar(256)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {
+        "user_email_unique": {
+          "name": "user_email_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "email"
+          ]
+        }
+      },
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
     }
   },
-  "enums": {},
+  "enums": {
+    "public.bangs_type": {
+      "name": "bangs_type",
+      "schema": "public",
+      "values": [
+        "SeeThrough",
+        "Full",
+        "Choppy",
+        "CenterPart",
+        "SidePart",
+        "SlickBack"
+      ]
+    },
+    "public.curl_pattern": {
+      "name": "curl_pattern",
+      "schema": "public",
+      "values": [
+        "Loose",
+        "Medium",
+        "Tight",
+        "Irregular"
+      ]
+    },
+    "public.cut_type": {
+      "name": "cut_type",
+      "schema": "public",
+      "values": [
+        "Bob",
+        "Pixie",
+        "Layered",
+        "Shag",
+        "OneLength"
+      ]
+    },
+    "public.finish_texture": {
+      "name": "finish_texture",
+      "schema": "public",
+      "values": [
+        "Glossy",
+        "Natural",
+        "Matte"
+      ]
+    },
+    "public.hair_length": {
+      "name": "hair_length",
+      "schema": "public",
+      "values": [
+        "AboveEar",
+        "EarToJaw",
+        "BelowJaw",
+        "Shoulder",
+        "Collarbone",
+        "Bust",
+        "MidBack",
+        "Waist"
+      ]
+    },
+    "public.layering_type": {
+      "name": "layering_type",
+      "schema": "public",
+      "values": [
+        "Light",
+        "Medium",
+        "Heavy"
+      ]
+    },
+    "public.perm_type": {
+      "name": "perm_type",
+      "schema": "public",
+      "values": [
+        "C_Curl",
+        "S_Curl",
+        "Hippie",
+        "Glam",
+        "Digital",
+        "Sand"
+      ]
+    },
+    "public.straight_type": {
+      "name": "straight_type",
+      "schema": "public",
+      "values": [
+        "NaturalStraight",
+        "VolumeMagic"
+      ]
+    },
+    "public.updo_type": {
+      "name": "updo_type",
+      "schema": "public",
+      "values": [
+        "Ponytail",
+        "Bun",
+        "HalfUp",
+        "AllBack"
+      ]
+    },
+    "public.volume_type": {
+      "name": "volume_type",
+      "schema": "public",
+      "values": [
+        "Flat",
+        "Root",
+        "Sides",
+        "Overall"
+      ]
+    }
+  },
   "schemas": {},
   "sequences": {},
   "roles": {},
