@@ -1,8 +1,11 @@
 import { HairstyleAnalysisForm } from "@/components/hairstyle-analysis-form";
+import { db } from "@/lib/db";
 
-export default function Home() {
+export default async function Home() {
+  const hairstyles = await db.query.hairstyle.findMany();
+
   return (
-    <div className="max-w-lg mx-auto px-4 min-h-svh flex flex-col justify-center items-center">
+    <div className="max-w-lg mx-auto px-4 min-h-svh flex flex-col justify-center items-center py-10">
       {/* 헤더 섹션 */}
       <div className="mb-12 text-center">
         <h1 className="text-4xl font-bold mb-4">
@@ -16,7 +19,7 @@ export default function Home() {
       </div>
 
       {/* 폼 섹션 */}
-      <HairstyleAnalysisForm />
+      <HairstyleAnalysisForm hairstyles={hairstyles} />
     </div>
   );
 }

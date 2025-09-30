@@ -17,10 +17,13 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { convertToBase64 } from "@/lib/imageUtils";
 
 const formSchema = z.object({
   email: z.string().email("유효한 이메일 주소를 입력해주세요"),
+  hairstyleId: z.string().min(1, "헤어스타일을 선택해주세요"),
   image: z
     .instanceof(File, { message: "이미지를 업로드해주세요" })
     .nullable()
@@ -40,11 +43,20 @@ const formSchema = z.object({
 
 type FormData = z.infer<typeof formSchema>;
 
-export function HairstyleAnalysisForm() {
+interface HairstyleAnalysisFormProps {
+  hairstyles: {
+    id: string;
+    name: string;
+  }[];
+}
+export function HairstyleAnalysisForm({
+  hairstyles,
+}: HairstyleAnalysisFormProps) {
   const form = useForm<FormData>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       email: "",
+      hairstyleId: "",
       image: null,
     },
   });
@@ -67,6 +79,7 @@ export function HairstyleAnalysisForm() {
         body: JSON.stringify({
           image: base64Image,
           email: data.email,
+          hairstyleId: data.hairstyleId,
         }),
       });
 
@@ -106,6 +119,44 @@ export function HairstyleAnalysisForm() {
               </FormDescription>
               <FormControl>
                 <Input type="email" placeholder="your@email.com" {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        {/* 헤어스타일 선택 필드 */}
+        <FormField
+          control={form.control}
+          name="hairstyleId"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>원하는 헤어스타일</FormLabel>
+              <FormDescription>
+                시도해보고 싶은 헤어스타일을 선택해주세요.
+              </FormDescription>
+              <FormControl>
+                <RadioGroup
+                  onValueChange={field.onChange}
+                  defaultValue={field.value}
+                  className="grid grid-cols-2 gap-4"
+                  disabled={isLoading}
+                >
+                  {hairstyles.map((hairstyle) => (
+                    <div
+                      key={hairstyle.id}
+                      className="flex items-center space-x-2"
+                    >
+                      <RadioGroupItem value={hairstyle.id} id={hairstyle.id} />
+                      <Label
+                        htmlFor={hairstyle.id}
+                        className="font-normal cursor-pointer"
+                      >
+                        {hairstyle.name}
+                      </Label>
+                    </div>
+                  ))}
+                </RadioGroup>
               </FormControl>
               <FormMessage />
             </FormItem>

@@ -1,44 +1,51 @@
-import { GoogleGenAI } from "@google/genai";
-import { womenHairstyles } from "./women-hairstyles";
+import { generateText } from "ai";
+import type { hairstyle } from "@/schema";
 
-export async function generateHairstyle(base64Image: string) {
-  const ai = new GoogleGenAI({
-    apiKey: process.env.GEMINI_API_KEY,
-  });
-
-  const batch = womenHairstyles.map(async ({ name, description }) => {
-    const response = await ai.models.generateContent({
-      model: "gemini-2.5-flash-image-preview",
-      config: {
-        responseModalities: ["IMAGE", "TEXT"],
-      },
-      contents: [
-        {
-          inlineData: {
-            mimeType: "image/png",
-            data: base64Image,
+export async function generateHairstyle(
+  base64Image: string,
+  hairstyleData: typeof hairstyle.$inferSelect,
+) {
+  const result = await generateText({
+    model: "google/gemini-2.5-flash-image-preview",
+    providerOptions: {
+      google: { responseModalities: ["TEXT", "IMAGE"] },
+    },
+    messages: [
+      {
+        role: "user",
+        content: [
+          {
+            type: "text",
+            text: `Transform the hairstyle of a person in the image to "${hairstyleData.name}", following below:
+            ${JSON.stringify(hairstyleData)}
+            `,
           },
-        },
-        {
-          text: `인물의 헤어스타일을 "${name}" (${description})로 변환하고, 얼굴형에 맞춰 자연스럽고 실제감 있는 느낌을 유지하세요. 머리색은 변경하지 마세요.`,
-        },
-      ],
-    });
-
-    const imageRawData =
-      response.candidates?.[0]?.content?.parts?.[0]?.inlineData?.data;
-
-    if (!imageRawData) {
-      return null;
-    }
-
-    return {
-      hairstyleName: name,
-      image: Buffer.from(imageRawData, "base64"),
-    };
+          {
+            type: "file",
+            mediaType: "image/png",
+            data: Buffer.from(base64Image, "base64"),
+          },
+        ],
+      },
+    ],
   });
 
-  const responses = await Promise.all(batch);
+  if (result.text) {
+    console.log(result.text);
+  }
 
-  return responses.filter((v) => v !== null);
+  const images: Uint8Array[] = [];
+
+  // Save generated images to local filesystem
+  const imageFiles = result.files.filter((f) =>
+    f.mediaType?.startsWith("image/"),
+  );
+
+  if (imageFiles.length > 0) {
+    for (const file of imageFiles) {
+      images.push(file.uint8Array);
+    }
+  }
+
+  return images;
 }
