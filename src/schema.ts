@@ -1,17 +1,5 @@
 import { relations } from "drizzle-orm";
-import { pgTable, timestamp, uuid, varchar } from "drizzle-orm/pg-core";
-import {
-  bangsTypeEnum,
-  curlPatternEnum,
-  cutTypeEnum,
-  finishTextureEnum,
-  hairLengthEnum,
-  layeringTypeEnum,
-  permTypeEnum,
-  straightTypeEnum,
-  updoTypeEnum,
-  volumeTypeEnum,
-} from "./hairstyle-enum";
+import { pgTable, text, timestamp, uuid, varchar } from "drizzle-orm/pg-core";
 
 export const user = pgTable("user", {
   id: uuid("id").defaultRandom().primaryKey(),
@@ -26,18 +14,18 @@ export const user = pgTable("user", {
 
 export const hairstyle = pgTable("hairstyle", {
   id: uuid("id").defaultRandom().primaryKey(),
-  name: varchar("name", { length: 256 }).notNull(),
+  name: varchar("name", { length: 256 }).notNull().unique(),
   description: varchar("description", { length: 512 }),
-  hairLength: hairLengthEnum("hair_length").notNull(),
-  cutType: cutTypeEnum("cut_type"),
-  permType: permTypeEnum("perm_type"),
-  straightType: straightTypeEnum("straight_type"),
-  updoType: updoTypeEnum("updo_type"),
-  curlPattern: curlPatternEnum("curl_pattern"),
-  bangsType: bangsTypeEnum("bangs_type"),
-  volumeType: volumeTypeEnum("volume_type"),
-  layeringType: layeringTypeEnum("layering_type"),
-  finishTexture: finishTextureEnum("finish_texture"),
+  hairLength: text("hair_length"),
+  cutType: text("cut_type"),
+  permType: text("perm_type"),
+  straightType: text("straight_type"),
+  updoType: text("updo_type"),
+  curlPattern: text("curl_pattern"),
+  bangsType: text("bangs_type"),
+  volumeType: text("volume_type"),
+  layeringType: text("layering_type"),
+  finishTexture: text("finish_texture"),
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at")
     .defaultNow()

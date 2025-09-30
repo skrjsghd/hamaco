@@ -1,0 +1,1 @@
+ALTER TABLE "hairstyle" ADD CONSTRAINT "hairstyle_name_unique" UNIQUE("name");
