@@ -1,7 +1,7 @@
 import { eq } from "drizzle-orm";
 import Image from "next/image";
 import { db } from "@/lib/db";
-import { profile } from "@/schema";
+import { user } from "@/schema";
 
 export default async function ResultPage({
   params,
@@ -10,10 +10,14 @@ export default async function ResultPage({
 }) {
   const { id } = await params;
 
-  const result = await db.query.profile.findFirst({
-    where: eq(profile.id, id),
+  const result = await db.query.user.findFirst({
+    where: eq(user.id, id),
     with: {
-      hairstyles: true,
+      hairstyleSuggestions: {
+        with: {
+          hairstyle: true,
+        },
+      },
     },
   });
 
@@ -23,11 +27,11 @@ export default async function ResultPage({
 
   return (
     <div className="max-w-lg mx-auto px-4 py-6 min-h-svh space-y-10">
-      {result.hairstyles.map((hairstyle) => (
-        <div key={hairstyle.imageUrl}>
+      {result.hairstyleSuggestions.map(({ hairstyle, imageUrl }) => (
+        <div key={imageUrl}>
           <h3 className="text-lg font-bold">{hairstyle.name}</h3>
           <Image
-            src={`${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/${hairstyle.imageUrl}`}
+            src={`${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/${imageUrl}`}
             alt={hairstyle.name}
             width={500}
             height={500}
