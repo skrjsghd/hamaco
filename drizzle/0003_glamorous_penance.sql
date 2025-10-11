@@ -1,0 +1,1 @@
+ALTER TABLE "hairstyle_suggestion" ALTER COLUMN "image_url" DROP NOT NULL;

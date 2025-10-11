@@ -1,5 +1,12 @@
 import { relations } from "drizzle-orm";
-import { pgTable, text, timestamp, uuid, varchar } from "drizzle-orm/pg-core";
+import {
+  pgEnum,
+  pgTable,
+  text,
+  timestamp,
+  uuid,
+  varchar,
+} from "drizzle-orm/pg-core";
 
 export const user = pgTable("user", {
   id: uuid("id").defaultRandom().primaryKey(),
@@ -33,11 +40,19 @@ export const hairstyle = pgTable("hairstyle", {
     .$onUpdate(() => new Date()),
 });
 
+export const hairstyleSuggestionStatus = pgEnum("hairstyle_suggestion_status", [
+  "PENDING",
+  "GENERATING",
+  "COMPLETED",
+  "FAILED",
+]);
+
 export const hairstyleSuggestion = pgTable("hairstyle_suggestion", {
   id: uuid("id").defaultRandom().primaryKey(),
   userId: uuid("user_id").notNull(),
   hairstyleId: uuid("hairstyle_id").notNull(),
-  imageUrl: varchar("image_url", { length: 256 }).notNull(),
+  imageUrl: varchar("image_url", { length: 256 }),
+  status: hairstyleSuggestionStatus("status").notNull().default("PENDING"),
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at")
     .defaultNow()

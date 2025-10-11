@@ -22,6 +22,27 @@
       "when": 1759226670703,
       "tag": "0002_high_vampiro",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1760151836820,
+      "tag": "0003_glamorous_penance",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1760151990485,
+      "tag": "0004_deep_nitro",
+      "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1760152040547,
+      "tag": "0005_aspiring_glorian",
+      "breakpoints": true
     }
   ]
 }

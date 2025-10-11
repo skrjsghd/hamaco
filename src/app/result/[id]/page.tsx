@@ -62,7 +62,7 @@ export default async function ResultPage({
               </ComparisonItem>
               <ComparisonItem position="right">
                 <Image
-                  src={getImageUrl(imageUrl)}
+                  src={getImageUrl(imageUrl ?? "")}
                   alt={hairstyle.name}
                   width={500}
                   height={500}

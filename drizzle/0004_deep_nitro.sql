@@ -1,0 +1,1 @@
+ALTER TABLE "hairstyle_suggestion" ADD COLUMN "status" "hairstyle_suggestion_status" DEFAULT 'PENDING' NOT NULL;

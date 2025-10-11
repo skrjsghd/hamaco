@@ -1,0 +1,1 @@
+CREATE TYPE "public"."hairstyle_suggestion_status" AS ENUM('PENDING', 'GENERATING', 'COMPLETED', 'FAILED');
