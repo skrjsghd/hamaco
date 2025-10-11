@@ -1,6 +1,6 @@
 "use client";
 
-import { RotateCcwIcon, UploadIcon } from "lucide-react";
+import { UploadIcon } from "lucide-react";
 import { useState } from "react";
 import { formatFileSize } from "@/lib/imageUtils";
 import { cn } from "@/lib/utils";
@@ -27,13 +27,7 @@ export function ImageUploader({
 
   const handleImageChange = (file: File) => {
     onImageSelect(file);
-
-    // 이미지 미리보기 생성
-    const reader = new FileReader();
-    reader.onload = () => {
-      setImagePreview(reader.result as string);
-    };
-    reader.readAsDataURL(file);
+    setImagePreview(URL.createObjectURL(file));
   };
 
   const handleDrag = (e: React.DragEvent) => {
@@ -70,13 +64,26 @@ export function ImageUploader({
 
   const acceptString = acceptedTypes.join(",");
 
+  if (imagePreview && value && value instanceof File) {
+    return (
+      <div className="space-y-4">
+        <img
+          src={imagePreview}
+          alt="이미지 미리보기"
+          className="w-full rounded-lg overflow-hidden aspect-square object-cover object-top"
+        />
+      </div>
+    );
+  }
+
   return (
     <div className="space-y-4">
       <label
         className={cn(
           "border-2 border-dashed rounded-lg p-6 text-center transition-colors cursor-pointer block relative group overflow-hidden",
-          disabled || isLoading ? "opacity-50 cursor-not-allowed" :
-            dragActive
+          disabled || isLoading
+            ? "opacity-50 cursor-not-allowed"
+            : dragActive
               ? "border-primary bg-primary/5"
               : "border-muted-foreground/25 hover:border-muted-foreground/50",
         )}
@@ -85,36 +92,22 @@ export function ImageUploader({
         onDragOver={handleDrag}
         onDrop={handleDrop}
       >
-        {imagePreview && value && value instanceof File ? (
-          <>
-            <div
-              className="w-full rounded-lg overflow-hidden aspect-square bg-center bg-cover"
-              style={{ backgroundImage: `url(${imagePreview})` }}
-              role="img"
-              aria-label="업로드된 이미지 미리보기"
-            />
-            <div className="opacity-0 absolute inset-0 flex flex-col items-center justify-center bg-black/50 group-hover:opacity-100 transition-all backdrop-blur-xs text-white">
-              <RotateCcwIcon size={24} />
-              <div className="font-medium mt-2">다시 업로드</div>
-            </div>
-          </>
-        ) : (
-          <div className="gap-y-2 flex flex-col items-center justify-center">
-            <div className="flex size-8 items-center justify-center rounded-md bg-muted text-muted-foreground">
-              <UploadIcon size={16} />
-            </div>
-            <div>
-              <p className="text-sm font-medium">
-                {isLoading
-                  ? "업로드 중..."
-                  : "클릭하거나 파일을 드래그해서 업로드"}
-              </p>
-              <p className="text-xs text-muted-foreground">
-                PNG, JPG, WebP (최대 {formatFileSize(maxSize)})
-              </p>
-            </div>
+        <div className="gap-y-2 flex flex-col items-center justify-center">
+          <div className="flex size-8 items-center justify-center rounded-md bg-muted text-muted-foreground">
+            <UploadIcon size={16} />
           </div>
-        )}
+          <div>
+            <p className="text-sm font-medium">
+              {isLoading
+                ? "업로드 중..."
+                : "클릭하거나 파일을 드래그해서 업로드"}
+            </p>
+            <p className="text-xs text-muted-foreground">
+              PNG, JPG, WebP (최대 {formatFileSize(maxSize)})
+            </p>
+          </div>
+        </div>
+
         <input
           type="file"
           accept={acceptString}
