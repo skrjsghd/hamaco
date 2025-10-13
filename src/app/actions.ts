@@ -1,56 +1,56 @@
 "use server";
 
 import { createClient } from "@supabase/supabase-js";
-import { eq } from "drizzle-orm";
+import { inArray } from "drizzle-orm";
 import { redirect } from "next/navigation";
+import { generateHairstyle } from "@/lib/ai";
 import { db } from "@/lib/db";
-import { hairstyleSuggestion, user } from "@/schema";
+import { guest, hairstyle, hairstyleSuggestion } from "@/schema";
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
 const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
 
 export async function applyHairstyleGeneration(data: {
-  email: string;
   hairstyleIds: string[];
   base64Image: string;
 }) {
-  const { email, hairstyleIds, base64Image } = data;
+  const { hairstyleIds, base64Image } = data;
   if (!supabaseUrl || !supabaseKey) {
     throw new Error("Missing Supabase configuration");
   }
   const supabase = createClient(supabaseUrl, supabaseKey);
 
-  const existingUser = await db.query.user.findFirst({
-    where: eq(user.email, email),
+  // 신규 유저 정보를 데이터베이스에 저장
+  const newGuestUser = await db.insert(guest).values({}).returning();
+  const hairstyleData = await db.query.hairstyle.findMany({
+    where: inArray(hairstyle.id, hairstyleIds),
   });
 
-  if (existingUser) {
-    return { message: "이미 사용된 이메일입니다." };
-  }
+  const generationPromises = hairstyleData.map(async (data) => {
+    // 헤어스타일 생성
+    const simulatedImage = await generateHairstyle(base64Image, data);
 
-  // 신규 유저라면 이미지를 스토리지에 저장
-  const filename = `/${email}/${crypto.randomUUID()}.png`;
-  const portraitImageBuffer = Buffer.from(base64Image, "base64");
-  const { data: portraitImageData } = await supabase.storage
-    .from("images")
-    .upload(filename, portraitImageBuffer, { contentType: "image/png" });
+    // 생성된 이미지를 스토리지에 저장
+    const filename = `/${newGuestUser[0].id}/${crypto.randomUUID()}.png`;
+    const { data: savedImage, error } = await supabase.storage
+      .from("images")
+      .upload(filename, simulatedImage, { contentType: "image/png" });
 
-  // 신규 유저 정보를 데이터베이스에 저장
-  const newUser = await db
-    .insert(user)
-    .values({
-      email,
-      portraitImageUrl: portraitImageData?.fullPath,
-    })
-    .returning();
-  // 헤어스타일 생성 요청을 저장
-  await db.insert(hairstyleSuggestion).values(
-    hairstyleIds.map((hairstyleId) => ({
-      userId: newUser[0].id,
-      hairstyleId,
-      imageUrl: "",
-    })),
-  );
+    if (!savedImage || error) {
+      return;
+    }
 
-  redirect("/");
+    // 이미지 url을 데이터베이스에 저장
+    await db.insert(hairstyleSuggestion).values({
+      userId: newGuestUser[0].id,
+      hairstyleId: data.id,
+      imageUrl: savedImage.fullPath,
+    });
+
+    return;
+  });
+
+  await Promise.all(generationPromises);
+
+  redirect(`/hairstyles/${newGuestUser[0].id}`);
 }

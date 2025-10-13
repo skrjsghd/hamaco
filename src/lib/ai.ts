@@ -36,7 +36,6 @@ export async function generateHairstyle(
 
   const images: Uint8Array[] = [];
 
-  // Save generated images to local filesystem
   const imageFiles = result.files.filter((f) =>
     f.mediaType?.startsWith("image/"),
   );
@@ -47,5 +46,5 @@ export async function generateHairstyle(
     }
   }
 
-  return images;
+  return images[0];
 }
