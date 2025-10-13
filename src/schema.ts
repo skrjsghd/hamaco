@@ -19,6 +19,15 @@ export const user = pgTable("user", {
     .$onUpdate(() => new Date()),
 });
 
+export const guest = pgTable("guest", {
+  id: uuid("id").defaultRandom().primaryKey(),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at")
+    .defaultNow()
+    .notNull()
+    .$onUpdate(() => new Date()),
+});
+
 export const hairstyle = pgTable("hairstyle", {
   id: uuid("id").defaultRandom().primaryKey(),
   name: varchar("name", { length: 256 }).notNull().unique(),
@@ -64,12 +73,20 @@ export const userRelations = relations(user, ({ many }) => ({
   hairstyleSuggestions: many(hairstyleSuggestion),
 }));
 
+export const guestRelations = relations(guest, ({ many }) => ({
+  hairstyleSuggestions: many(hairstyleSuggestion),
+}));
+
 export const hairstyleSuggestionRelations = relations(
   hairstyleSuggestion,
   ({ one }) => ({
     user: one(user, {
       fields: [hairstyleSuggestion.userId],
       references: [user.id],
+    }),
+    guest: one(guest, {
+      fields: [hairstyleSuggestion.userId],
+      references: [guest.id],
     }),
     hairstyle: one(hairstyle, {
       fields: [hairstyleSuggestion.hairstyleId],

@@ -43,6 +43,13 @@
       "when": 1760152040547,
       "tag": "0005_aspiring_glorian",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1760333293487,
+      "tag": "0006_massive_green_goblin",
+      "breakpoints": true
     }
   ]
 }
