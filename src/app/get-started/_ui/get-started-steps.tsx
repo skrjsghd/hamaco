@@ -8,7 +8,7 @@ import { applyHairstyleGeneration } from "@/app/actions";
 import { PageHeaderNav } from "@/components/page-header-nav";
 import { Button } from "@/components/ui/button";
 import { Form } from "@/components/ui/form";
-import { convertToBase64 } from "@/lib/imageUtils";
+import { compressImageToTargetSize, convertToBase64 } from "@/lib/imageUtils";
 import type { HairstyleSelectFormPayload } from "@/types/hairstyle";
 import { FormBottomSection } from "./form-bottom-section";
 import { FormHeaderSection } from "./form-header-section";
@@ -67,7 +67,13 @@ export function GetStartedSteps({ hairstyles }: GetStartedStepsProps) {
   const handleSubmit = (data: GetStartedFormData) =>
     startTransition(async () => {
       const { hairstyleIds, image } = data;
-      const base64Image = await convertToBase64(image);
+
+      // 이미지를 1MB 이하로 압축
+      const compressedImage = await compressImageToTargetSize(image, 1);
+
+      // 압축된 이미지를 Base64로 변환
+      const base64Image = await convertToBase64(compressedImage);
+
       await applyHairstyleGeneration({
         hairstyleIds,
         base64Image,
