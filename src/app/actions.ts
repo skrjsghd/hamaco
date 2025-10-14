@@ -12,9 +12,9 @@ const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
 
 export async function applyHairstyleGeneration(data: {
   hairstyleIds: string[];
-  base64Image: string;
+  image: File;
 }) {
-  const { hairstyleIds, base64Image } = data;
+  const { hairstyleIds, image } = data;
   if (!supabaseUrl || !supabaseKey) {
     throw new Error("Missing Supabase configuration");
   }
@@ -28,7 +28,7 @@ export async function applyHairstyleGeneration(data: {
 
   const generationPromises = hairstyleData.map(async (data) => {
     // 헤어스타일 생성
-    const simulatedImage = await generateHairstyle(base64Image, data);
+    const simulatedImage = await generateHairstyle(image, data);
 
     // 생성된 이미지를 스토리지에 저장
     const filename = `/${newGuestUser[0].id}/${crypto.randomUUID()}.png`;

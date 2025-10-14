@@ -2,9 +2,10 @@ import { generateText } from "ai";
 import type { hairstyle } from "@/schema";
 
 export async function generateHairstyle(
-  base64Image: string,
+  image: File,
   hairstyleData: typeof hairstyle.$inferSelect,
 ) {
+  const imageBuffer = await image.arrayBuffer();
   const result = await generateText({
     model: "google/gemini-2.5-flash-image-preview",
     providerOptions: {
@@ -23,7 +24,7 @@ export async function generateHairstyle(
           {
             type: "file",
             mediaType: "image/png",
-            data: Buffer.from(base64Image, "base64"),
+            data: imageBuffer,
           },
         ],
       },
