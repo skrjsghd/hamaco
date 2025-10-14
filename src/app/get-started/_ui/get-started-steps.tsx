@@ -4,7 +4,6 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Loader } from "lucide-react";
 import { Fragment, useState, useTransition } from "react";
 import { useForm } from "react-hook-form";
-import { toast } from "sonner";
 import { applyHairstyleGeneration } from "@/app/actions";
 import { PageHeaderNav } from "@/components/page-header-nav";
 import { Button } from "@/components/ui/button";
@@ -67,18 +66,12 @@ export function GetStartedSteps({ hairstyles }: GetStartedStepsProps) {
 
   const handleSubmit = (data: GetStartedFormData) =>
     startTransition(async () => {
-      try {
-        const { hairstyleIds, image } = data;
-        const base64Image = await convertToBase64(image);
-        await applyHairstyleGeneration({
-          hairstyleIds,
-          base64Image,
-        });
-      } catch {
-        toast.error(
-          "헤어스타일 생성 중 오류가 발생했습니다. 다시 시도해주세요.",
-        );
-      }
+      const { hairstyleIds, image } = data;
+      const base64Image = await convertToBase64(image);
+      await applyHairstyleGeneration({
+        hairstyleIds,
+        base64Image,
+      });
     });
 
   const renderStepField = (key: (typeof STEP_CONFIG)[number]["key"]) => {
@@ -128,11 +121,8 @@ export function GetStartedSteps({ hairstyles }: GetStartedStepsProps) {
               disabled={disabledSubmitButton}
               onClick={handleMoveNextStep}
             >
-              {isPending ? (
-                <Loader className="animate-spin" />
-              ) : (
-                currentStep.buttonText
-              )}
+              {isPending && <Loader className="animate-spin" />}
+              {currentStep.buttonText}
             </Button>
           </FormBottomSection>
         </form>
