@@ -1,10 +1,11 @@
 import { eq } from "drizzle-orm";
-import { ChevronLeftIcon, DownloadIcon } from "lucide-react";
+import { ChevronLeftIcon } from "lucide-react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { db } from "@/lib/db";
 import { user } from "@/schema";
 import { Comparison } from "./_ui/comparison";
+import { ImageDownloadButton } from "./_ui/image-download-button";
 
 export default async function ResultPage({
   params,
@@ -56,10 +57,12 @@ export default async function ResultPage({
           <div key={imageUrl}>
             <div className="flex items-center justify-between px-1 py-2">
               <h3 className="font-semibold text-lg">{hairstyle.name}</h3>
-              {/* <Button variant="outline">
-                <DownloadIcon />
-                다운로드
-              </Button> */}
+              {imageUrl && (
+                <ImageDownloadButton
+                  imageUrl={imageUrl}
+                  filename={`${hairstyle.name}`}
+                />
+              )}
             </div>
             <Comparison
               originalImageUrl={result.portraitImageUrl ?? ""}
