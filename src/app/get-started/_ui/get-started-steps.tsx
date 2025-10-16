@@ -4,12 +4,14 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Loader } from "lucide-react";
 import { Fragment, useState, useTransition } from "react";
 import { useForm } from "react-hook-form";
+import { toast } from "sonner";
 import { applyHairstyleGeneration } from "@/app/actions";
 import { PageHeaderNav } from "@/components/page-header-nav";
 import { Button } from "@/components/ui/button";
 import { Form } from "@/components/ui/form";
 import { compressImageToTargetSize } from "@/lib/imageUtils";
 import type { HairstyleSelectFormPayload } from "@/types/hairstyle";
+import { EmailInputField } from "./email-input-field";
 import { FormBottomSection } from "./form-bottom-section";
 import { FormHeaderSection } from "./form-header-section";
 import {
@@ -24,6 +26,12 @@ interface GetStartedStepsProps {
 }
 
 const STEP_CONFIG = [
+  {
+    key: "EMAIL_INPUT",
+    title: "결과를 받을 수 있는\n이메일 주소가 필요해요",
+    description: null,
+    buttonText: "헤어스타일 고르기",
+  },
   {
     key: "HAIRSTYLE_SELECT",
     title: "헤어스타일을\n 최대 3개까지 선택해주세요",
@@ -45,6 +53,7 @@ export function GetStartedSteps({ hairstyles }: GetStartedStepsProps) {
   const form = useForm<GetStartedFormData>({
     resolver: zodResolver(getStartedFormSchema),
     defaultValues: {
+      email: "",
       hairstyleIds: [],
       image: undefined,
     },
@@ -53,6 +62,13 @@ export function GetStartedSteps({ hairstyles }: GetStartedStepsProps) {
   const handleMoveNextStep = async () => {
     switch (steps) {
       case 0: {
+        const isValid = await form.trigger("email");
+        if (isValid) {
+          setSteps((prev) => prev + 1);
+        }
+        break;
+      }
+      case 1: {
         const isValid = await form.trigger("hairstyleIds");
         if (isValid) {
           setSteps((prev) => prev + 1);
@@ -66,18 +82,25 @@ export function GetStartedSteps({ hairstyles }: GetStartedStepsProps) {
 
   const handleSubmit = (data: GetStartedFormData) =>
     startTransition(async () => {
-      const { hairstyleIds, image } = data;
+      const { email, hairstyleIds, image } = data;
       // 이미지를 1MB 이하로 압축
       const compressedImage = await compressImageToTargetSize(image, 1);
 
-      await applyHairstyleGeneration({
+      const result = await applyHairstyleGeneration({
+        email,
         hairstyleIds,
         image: compressedImage,
       });
+
+      if (!result.success) {
+        toast.error(result.message);
+      }
     });
 
   const renderStepField = (key: (typeof STEP_CONFIG)[number]["key"]) => {
     switch (key) {
+      case "EMAIL_INPUT":
+        return <EmailInputField form={form} />;
       case "HAIRSTYLE_SELECT":
         return <HairstyleSelectField form={form} hairstyles={hairstyles} />;
       case "IMAGE_UPLOAD":
@@ -117,7 +140,7 @@ export function GetStartedSteps({ hairstyles }: GetStartedStepsProps) {
           }).reverse()}
           <FormBottomSection>
             <Button
-              type={disabledSubmitButton ? "button" : "submit"}
+              type={steps === STEP_CONFIG.length - 1 ? "submit" : "button"}
               className="w-full"
               size={"lg"}
               disabled={disabledSubmitButton || isPending}
