@@ -30,10 +30,7 @@ export function Comparison({
 
   return (
     <div
-      className={cn(
-        "relative transition-transform",
-        showOriginal && "scale-95",
-      )}
+      className="relative"
       onPointerDown={handlePointerDown}
       onPointerUp={handlePointerUp}
       onPointerLeave={handlePointerLeave}
@@ -43,7 +40,9 @@ export function Comparison({
         alt="transformed"
         width={500}
         height={500}
-        className="aspect-square rounded-lg select-none pointer-events-none object-cover object-top"
+        className={cn(
+          "aspect-square select-none pointer-events-none object-cover object-top w-full",
+        )}
       />
       <Image
         src={getImageUrl(originalImageUrl)}
@@ -51,8 +50,8 @@ export function Comparison({
         width={500}
         height={500}
         className={cn(
-          "aspect-square rounded-lg select-none pointer-events-none object-cover object-top absolute top-0 left-0 transition-all",
-          showOriginal ? "opacity-100 blur-none" : "opacity-0 blur-xs",
+          "aspect-square select-none pointer-events-none object-cover object-top absolute top-0 left-0 transition-all w-full duration-300",
+          showOriginal ? "opacity-100" : "opacity-0",
         )}
       />
     </div>
