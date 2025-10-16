@@ -1,3 +1,4 @@
+import { gateway } from "@ai-sdk/gateway";
 import { generateText } from "ai";
 import type { hairstyle } from "@/schema";
 
@@ -7,9 +8,14 @@ export async function generateHairstyle(
 ) {
   const imageBuffer = await image.arrayBuffer();
   const result = await generateText({
-    model: "google/gemini-2.5-flash-image-preview",
+    model: gateway("google/gemini-2.5-flash-image"),
     providerOptions: {
-      google: { responseModalities: ["TEXT", "IMAGE"] },
+      google: {
+        responseModalities: ["IMAGE"],
+        imageConfig: {
+          aspectRatio: "1:1",
+        },
+      },
     },
     messages: [
       {
